@@ -1,12 +1,77 @@
-#+title Linas' Emacs Configuration
+#+title: Neatmacs Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el
 
-* Startup Performance
+* Startup
+** Garbage collection
+Increate the GC threshold for faster startup. 
 
 #+begin_src emacs-lisp
+  ;;; init.el -*- lexical-binding: t; -*-
 
-  (setq gc-cons-threshold (* 10 1000 1000))
+  ;; Increase the GC threshold for faster starup.
+  (setq gc-cons-threshold (* 100 1000 1000))
 
+#+end_src
+
+** Prefer newest compiled .el files
+
+#+begin_src emacs-lisp
+  ;; Prefer newest compiled .el files
+  (customize-set-variable 'load-prefer-newer noninteractive)
+#+end_src
+
+** Native compilation settings
+
+#+begin_src emacs-lisp
+  (when (featurep 'native-compile)
+    ;; Silence compiler warnings
+    (setq native-comp-async-report-warnings-errors nil)
+
+    ;; Make native compilation happen asynchronously
+    (setq native-comp-deferred-compilation t)
+
+    ;; Set the right directory to store the native compilation cache
+    ;; Note the method for setting the eln-cache directory depends on the emacs version
+    (when (fboundp 'startup-redirect-eln-cache)
+      (if (version< emacs-version "29")
+          (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))
+        (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))))
+    (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache" user-emacs-directory)))
+#+end_src
+
+** Load darker theme
+
+Load a darker theme to avoid getting blinded on emacs startup.
+
+#+begin_src emacs-lisp
+  (load-theme 'deeper-blue t)
+#+end_src
+
+** Initial buffer to be fundamental mode
+
+Should load the initial buffer faster.
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'initial-major-mode 'fundamental-mode)
+#+end_src
+
+** Profile startup time
+#+begin_src emacs-lisp
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (message "Neatmacs loaded in %s."
+                       (emacs-init-time))))
+#+end_src
+
+** Coding sytem
+#+begin_src emacs-lisp
+  (set-default-coding-systems 'utf-8)
+#+end_src
+
+** Large files
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'large-file-warning-threshold (* 100 1000 1000))
 #+end_src
 
 * Start emacs server
@@ -15,6 +80,15 @@
 
   (server-start)
 
+#+end_src
+
+* Group
+
+#+begin_src emacs-lisp
+  (defgroup neatmacs '()
+    "A Neat Emacs Configuration"
+    :tag "Neatmacs"
+    :group 'emacs)
 #+end_src
 
 * Package System Setup
@@ -42,13 +116,20 @@
   
 #+end_src
 
+* Load config.el
+
+#+begin_src emacs-lisp
+  (when (file-exists-p (expand-file-name "config.el" user-emacs-directory))
+    (load (expand-file-name "config.el" user-emacs-directory) nil 'nomessage))
+#+end_src
+
 * Basic UI Configuration
 
 #+begin_src emacs-lisp
 
-  (defvar linas/default-font-size 100)
-  (defvar linas/default-variable-font-size 100)
-  (defvar linas/frame-transparency '(90 . 90))
+  (defvar neatmacs/default-font-size 100)
+  (defvar neatmacs/default-variable-font-size 100)
+  (defvar neatmacs/frame-transparency '(99 . 100))
 
   (setq inhibit-startup-message t)
 
@@ -68,8 +149,8 @@
 
 #+begin_src emacs-lisp
 
-  (set-frame-parameter (selected-frame) 'alpha linas/frame-transparency)
-  (add-to-list 'default-frame-alist `(alpha . ,linas/frame-transparency))
+  (set-frame-parameter (selected-frame) 'alpha neatmacs/frame-transparency)
+  (add-to-list 'default-frame-alist `(alpha . ,neatmacs/frame-transparency))
 
 #+end_src
 
@@ -100,30 +181,23 @@
 *Prerequisites*
   - ~Font Code Retina~
   - ~Cantarell~
+  - ~Jetbrains Mono~
 
-    Install on Void Linux by running:
-
-#+begin_src sh
-
-  sudo xbps-install cantarell-fonts font-firacode
-
-#+end_src
-
-
+    
 #+begin_src emacs-lisp
 
-  (defun linas/set-font-faces ()
+  (defun neatmacs/set-font-faces ()
     ;; Font
-    ;;(set-face-attribute 'default nil :font "Jetbrains Mono" :height default-font-size)
-    (set-face-attribute 'default nil :font "Fira Code Retina" :height linas/default-font-size)
+    (set-face-attribute 'default nil :font "Jetbrains Mono" :height neatmacs/default-font-size)
+    (set-face-attribute 'default nil :font "Fira Code Retina" :height neatmacs/default-font-size)
 
     ;; Set the fixed pitch face
-    (set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height linas/default-font-size)
-    ;;(set-face-attribute 'fixed-pitch nil :font "Jetbrains Mono" :height default-font-size)
-    :;(set-face-attribute 'fixed-pitch nil :font "Fira Code" :height default-font-size)
+    (set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height neatmacs/default-font-size)
+    (set-face-attribute 'fixed-pitch nil :font "Jetbrains Mono" :height neatmacs/default-font-size)
+    (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height neatmacs/default-font-size)
 
     ;; Set the variable pitch face
-    (set-face-attribute 'variable-pitch nil :font "Cantarell" :height linas/default-variable-font-size :weight 'regular))
+    (set-face-attribute 'variable-pitch nil :font "Cantarell" :height neatmacs/default-variable-font-size :weight 'regular))
 
   ;; Not working for some reason
   ;; (if (deamonp)
@@ -134,7 +208,7 @@
   ;;                   (linas/set-font-faces))))
   ;;   (linas/set-font-faces))
 
-  (linas/set-font-faces)
+  (neatmacs/set-font-faces)
 
 #+end_src
 
@@ -178,213 +252,7 @@
 
 #+end_src
 
-*** Evil mode
-
-#+begin_src emacs-lisp
-
-  (use-package evil
-    :init
-    (setq evil-want-integration t)
-    (setq evil-want-keybinding nil)
-    (setq evil-want-C-u-scroll t)
-    (setq evil-want-C-i-jump nil)
-    :custom
-    (evil-undo-system 'undo-fu)
-    :config
-    (evil-mode 1)
-    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-    (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-
-    ;; Use visual line motions even outside of visual-line-mode buffers
-    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-    (evil-set-initial-state 'message-buffer-mode 'normal)
-    (evil-set-initial-state 'dashboard-mode 'normal))
-
-  (use-package evil-collection
-    :after evil
-    :init
-    (evil-collection-init))
-
-#+end_src
-
-** Bidirectinoal Editing
-
-Emacs supports bidirectinal editing which means that scripts, such as Arabic, Farsi, and Hebrew, whose natural ordering of horizontal text for display is from right to left. However, digits and Latin text embedded in these scripts are still displayed left to right.
-
-Whilst this is a great feature, it adds to the amount of line scans Emacs has to for rendering text. So we are disabling it.
-
-[[https://200ok.ch/posts/2020-09-29_comprehensive_guide_on_handling_long_lines_in_emacs.html][Credits]]
-
-#+begin_src emacs-lisp
-
-  (setq-default bidi-paragraph-direction 'left-to-right)
-
-  (if (version<= "27.1" emacs-version)
-      (setq bidi-inhibit-bpa t))
-
-#+end_src 
-
-* Keep Folders Clean
-** Backup Files
-
-- Emacs.org~
-
-#+begin_src emacs-lisp
-
-  (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
-
-#+end_src
-
-You can also turn off this behaviour entirely:
-
-#+begin_src emacs-lisp
-
-  ;;(setq make-backup-files nil)
-
-#+end_src
-
-** Auto Save Files
-
-auto-save-mode will create temporary files in the same folder as edited files:
-- #Emacs.org#
-
-  You can change this using auto-save-file-name-transforms:
-#+begin_src emacs-lisp
-
-  ;; auto-save-mode doesn't create the path automatically!
-  (make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
-
-  (setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/"
-                                                     user-emacs-directory)
-        auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves"
-                                                                  user-emacs-directory) t)))
-
-#+end_src
-
-** Lock Files
-
-These are the files that look like ~#Emacs.org~. They appear when you have unsaved changes to a file in a buffer!
-
-Unfortunately these can't be moved, but they can be disabled:
-
-#+begin_src emacs-lisp
-
-  ;; (setq create-lockfiles nil)		
-
-#+end_src
-
-Not recommended setting this across the whole configuration but it can be useful in certain projects where these files cause trouble. Use directory-local variables for this!
-
-** Littering
-
-#+begin_src emacs-lisp
-
-  ;; NOTE: If you want to move everything out of the ~/.emacs.d folder
-  ;; reliably, set `user-emacs-directory` before loading no-littering!
-  ;; (setq user-emacs-directory "~/.cache/emacs")
-
-  (use-package no-littering)
-
-  ;; no-littering doesn't set this by default so we must place
-  ;; auto save files in the same path as it uses for sessions
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-
-#+end_src
-
 * UI Configuration
-** Color Theme
-
-#+begin_src emacs-lisp
-
-  (use-package doom-themes
-    :init (load-theme 'doom-henna t)
-    :custom
-    (doom-themes-enable-bold t)
-    (doom-themes-enable-italic t)
-    (doom-themes-treemacs-theme "doom-atom")
-    :config
-    (doom-themes-treemacs-config)
-    (doom-themes-org-config))
-
-#+end_src
-
-** Doom Modeline
-
-#+begin_src emacs-lisp
-
-  (use-package all-the-icons
-    :init
-    (unless (member "all-the-icons" (font-family-list))
-      (all-the-icons-install fonts t))
-    :custom
-    (all-the-icons-scale-factor 1))
-
-  (use-package doom-modeline
-    :init
-    (doom-modeline-mode 1)
-    :custom
-    (doom-modeline-height 15))
-
-#+end_src
-
-** Which Key
-
-#+begin_src emacs-lisp
-
-  (use-package which-key
-    :defer t
-    :init (which-key-mode)
-    :diminish which-key-mode
-    :custom
-    (which-key-idle-delay 0.4))
-
-#+end_src
-
-** Minibuffer completion with Vertico
-
-#+begin_src emacs-lisp
-
-  (use-package vertico
-    :bind (:map minibuffer-local-map
-                ("C-j" . vertico-next)
-                ("C-k" . vertico-previous)
-                :map minibuffer-local-map)
-    :custom
-    (vertico-cycle t)
-    :init
-    (vertico-mode))
-
-#+end_src
-
-*** Marginalia
-
-#+begin_src emacs-lisp
-
-  (use-package marginalia
-    :after vertico
-    :bind(:map minibuffer-local-map
-               ("M-A" . marginalia-cycle))
-    :custom
-    (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-    :init (marginalia-mode))
-
-#+end_src
-
-*** Orderless
-
-#+begin_src emacs-lisp
-
-(use-package orderless
-  :init
-  (setq completion-styles '(orderless)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
-
-#+end_src
-
 ** Consult
 *** Consult
 
@@ -592,36 +460,6 @@ Prescient also has an extension for Company mode to provide sorting based on fre
 
 #+end_src
 
-** Helpful
-
-Helpful package for better help features.
-
-#+begin_src emacs-lisp
-
-  (use-package helpful
-    :bind
-    ("C-h f" . helpful-callable)
-    ("C-h v" . helpful-variable)
-    ("C-h k" . helpful-key)
-
-    ;; Lookup the current symbol at point. C-c C-d is a common keybinding
-    ;; for this in lisp modes.
-    ("C-c C-d" . helpful-at-point)
-
-    ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
-    ;; already links to the manual, if a function is referenced there.
-    ("C-h F" . helpful-function)
-
-    ;; By default, C-h C is bound to describe `describe-coding-system'. I
-    ;; don't find this very useful, but it's frequently useful to only
-    ;; look at interactive functions.
-    ("C-h C" . helpful-command)
-    :after vertico
-    :commands (helpful-callable helpful-function helpful-variable helpful-at-point helpful-command helpful-key)
-    :custom (helpful-max-buffers 1))
-
- #+end_src
-
 ** Hydra (Text Scaling)
 
 #+begin_src emacs-lisp
@@ -636,26 +474,6 @@ Helpful package for better help features.
 
   (linas/leader-keys
     "ts" '(hydra-text-scale/body :which-key "scale text"))
-
-#+end_src
-
-** Shackle
-
-Enforce rules for popup windows.
-Shacke gives you the means to put an end to popped up buffers not behaving the way you'd like them to.
-
-#+begin_src emacs-lisp
-
-  ;; (use-package shackle
-  ;;   :custom
-  ;;   (shackle-rules
-  ;;    '((help-mode :noselect t)
-  ;;      (helpful-mode :noselect t)
-  ;;      (magit-mode :noselect t)
-  ;;      ))
-  ;;   (shackle-default-rule '(:same t))
-  ;;   :config
-  ;;   (shackle-mode 1))
 
 #+end_src
 
@@ -686,20 +504,7 @@ Intended for use with undo-fu, as a way to save and restore undo sessions, even 
 
 #+end_src
 
-** Solaire-mode
-
-Solaire-mode is an aesthetic plugin designed to visually distinguish "real" buffers (i.e. file-visiting code buffers where you do most of your work) from "unreal" buffers (like popups, sidebars, log buffers, terminals, etc) by giving the latter a slightly different -- often darker -- background
-
-#+begin_src  emacs-lisp
-
-  (use-package solaire-mode
-    :config
-    (solaire-global-mode +1))
-
-#+end_src
-
 * Org
-** Org Mode
 ** *Prerequisites*
 *** Latex preview in org mode
 
@@ -731,11 +536,11 @@ To be able to convert .tex files into pdfs
 
 #+begin_src emacs-lisp
 
-    (defun linas/org-mode-setup ()
-        (org-indent-mode)
-        (variable-pitch-mode 1)
-        (visual-line-mode 1)
-        (auto-fill-mode 0)) ; might need to remove the last
+  (defun linas/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1)
+    (auto-fill-mode 0)) ; might need to remove the last
 
 #+end_src
 
@@ -744,31 +549,31 @@ To be able to convert .tex files into pdfs
 #+begin_src emacs-lisp
 
   (defun linas/org-font-setup ()
-      ;; Replace list hyphen with dot
-      (font-lock-add-keywords 'org-mode
-			      '(("^ *\\([-]\\) "
-				 (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+    ;; Replace list hyphen with dot
+    (font-lock-add-keywords 'org-mode
+			    '(("^ *\\([-]\\) "
+			       (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-      ;; Set faces for heading levels
-      (dolist (face '((org-level-1 . 1.2)
-		      (org-level-2 . 1.1)
-		      (org-level-3 . 1.05)
-		      (org-level-4 . 1.0)
-		      (org-level-5 . 1.1)
-		      (org-level-6 . 1.1)
-		      (org-level-7 . 1.1)
-		      (org-level-8 . 1.1))))
-	;;(set-face-attribute (car face) nil :font "Cantarell" :weight 'normal :height (cdr face)))
+    ;; Set faces for heading levels
+    (dolist (face '((org-level-1 . 1.2)
+		    (org-level-2 . 1.1)
+		    (org-level-3 . 1.05)
+		    (org-level-4 . 1.0)
+		    (org-level-5 . 1.1)
+		    (org-level-6 . 1.1)
+		    (org-level-7 . 1.1)
+		    (org-level-8 . 1.1))))
+    ;;(set-face-attribute (car face) nil :font "Cantarell" :weight 'normal :height (cdr face)))
 
-      ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-      (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-      (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-      (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-      (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-      (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-      (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-      (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-      (setq evil-auto-indent nil)) ; might need to take out this later
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+    (setq evil-auto-indent nil)) ; might need to take out this later
 
 #+end_src
 
@@ -784,28 +589,32 @@ To be able to convert .tex files into pdfs
     (org-file-tags t)
     :config
     (setq org-ellipsis " ▾") ; ... to the triangle thingy
-  
+
     (setq org-pretty-entities t)
     (setq org-hide-emphasis-markers t)
-    (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
-  
+    (setq org-html-validation-link nil)
+    (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.3))
+
     (setq org-agenda-start-with-log-mode t)
     (setq org-log-done 'time)
     (setq org-log-into-drawer t)
-  
+
     (setq org-agenda-files '("~/org/Tasks.org"
+                             "~/org/Birthdays.org"
+                             "~/org/School.org"
+                             "~/org/Work.org"
                              "~/org/Mail.org"))
     (setq org-todo-keywords
           '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
             (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
-  
+
     (setq org-refile-targets
           '(("Archive.org" :maxlevel . 1)
             ("Tasks.org" :maxlevel . 1)))
-  
+
     ;; Save Org buffers after refiling!
     (advice-add 'org-refile :after 'org-save-all-org-buffers)
-  
+
     (setq org-tag-alist
           '((:startgroup)
             ("Project")
@@ -814,13 +623,14 @@ To be able to convert .tex files into pdfs
             ("@errand" . ?E)
             ("@home" . ?H)
             ("@work" . ?W)
+            ("@school" . ?S)
             ("agenda" . ?a)
             ("planning" . ?p)
             ("publish" . ?P)
             ("batch" . ?b)
             ("note" . ?n)
             ("idea" . ?i)))
-  
+
     ;; Configure custom agenda views
     (setq org-agenda-custom-commands
           '(("d" "Dashboard"
@@ -828,19 +638,19 @@ To be able to convert .tex files into pdfs
               (todo "NEXT"
                     ((org-agenda-overriding-header "Next Tasks")))
               (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
-  
+
             ("n" "Next Tasks"
              ((todo "NEXT"
                     ((org-agenda-overriding-header "Next Tasks")))))
-  
+
             ("W" "Work Tasks" tags-todo "+work")
-  
+
             ;; Low-effort next actions
             ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
              ((org-agenda-overriding-header "Low Effort Tasks")
               (org-agenda-max-todos 20)
               (org-agenda-files org-agenda-files)))
-  
+
             ("w" "Workflow Status"
              ((todo "WAIT"
                     ((org-agenda-overriding-header "Waiting on External")
@@ -868,9 +678,109 @@ To be able to convert .tex files into pdfs
               (todo "CANC"
                     ((org-agenda-overriding-header "Cancelled Projects")
                      (org-agenda-files org-agenda-files)))))))
-  
     (linas/org-font-setup))
-  
+
+#+end_src
+
+** Org Modern
+
+#+begin_src emacs-lisp
+
+  (use-package org-modern
+    :after org
+    :config
+    (global-org-modern-mode))
+
+#+end_src
+
+** Export
+*** LaTeX
+
+#+begin_src emacs-lisp
+
+  (require 'ox-latex)
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
+  (add-to-list 'org-latex-classes
+               '("article"
+                 "\\documentclass[11pt, a4paper]{article}
+
+  \\usepackage[utf8]{inputenc}
+  \\usepackage[T1]{fontenc}
+  \\usepackage{fixltx2e}
+  \\usepackage{graphicx}
+  \\usepackage{longtable}
+  \\usepackage{float}
+  \\usepackage{wrapfig}
+  \\usepackage{rotating}
+  \\usepackage[normalem]{ulem}
+  \\usepackage{amsmath}
+  \\usepackage{textcomp}
+  \\usepackage{marvosym}
+  \\usepackage{wasysym}
+  \\usepackage{amssymb}
+  \\usepackage{hyperref}
+  \\usepackage{mathpazo}
+  \\usepackage{color}
+  \\usepackage{enumerate}
+  \\definecolor{bg}{rgb}{0.95,0.95,0.95}
+  \\tolerance=1000
+
+  \\usepackage{listings}
+  \\usepackage{color}
+  \\usepackage{fancyvrb}
+  \\usepackage[margin=0.5in]{geometry}
+
+  \\definecolor{deepblue}{rgb}{0,0,0.5}
+  \\definecolor{linasyellow}{rgb}{1,1,0.7}
+  \\definecolor{deepred}{rgb}{0.6,0,0}
+  \\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+  \\DeclareFixedFont{\\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+  \\DeclareFixedFont{\\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+  \\linespread{1.1}
+  \\hypersetup{pdfborder=0 0 0}"
+
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+
+  ;; Use listing for source code blocks
+  (setq org-latex-listings t)
+
+  (setq org-latex-listings-options
+        '(("basicstyle" "\\ttfamily")
+          ("breakatwhitespace" "false")
+          ("breakautoindent" "true")
+          ("breaklines" "true")
+          ("columns" "[c]fullflexible")
+          ("commentstyle" "")
+          ("emptylines" "*")
+          ("extendedchars" "false")
+          ("fancyvrb" "true")
+          ("firstnumber" "auto")
+          ("flexiblecolumns" "false")
+          ("frame" "single")
+          ("frameround" "tttt")
+          ("identifierstyle" "")
+          ("keepspaces" "true")
+          ("keywordstyle" "")
+          ("mathescape" "false")
+          ("numbers" "left")
+          ("numbersep" "5pt")
+          ("numberstyle" "\\tiny")
+          ("resetmargins" "false")
+          ("showspaces" "false")
+          ("showtabs" "true")
+          ("stepnumber" "2")
+          ("stringstyle" "")
+          ("tab" "↹")
+          ("tabsize" "4")
+          ("texcl" "false")
+          ("upquote" "false")))
+
 #+end_src
 
 ** Auto-tangle Configuration Files
@@ -881,7 +791,7 @@ To be able to convert .tex files into pdfs
   (defun linas/org-babel-tangle-config ()
 
    (when (string-equal (file-name-directory (buffer-file-name))
-                        (expand-file-name "~/Projects/super-emacs-config/"))
+                        (expand-file-name "~/Projects/Neatmacs/"))
 
       ;; Dynamic scoping to the rescue
       (let ((org-confirm-babel-evaluate nil))
@@ -895,10 +805,10 @@ To be able to convert .tex files into pdfs
 
 #+begin_src emacs-lisp
 
-  (use-package org-bullets
-    :hook (org-mode . org-bullets-mode)
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+  ;; (use-package org-bullets
+    ;; :hook (org-mode . org-bullets-mode)
+    ;; :custom
+    ;; (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 #+end_src
 
@@ -1018,163 +928,6 @@ or:
 
 #+end_src
 
-* File Management
-** Dired
-*** General
-
-#+begin_src emacs-lisp
-
-  (use-package dired
-    :straight (:type built-in)
-    :commands (dired dired-jump)
-    :bind (("C-x C-j" . dired-jump))
-    :custom ((dired-listing-switches "-agho --group-directories-first"))
-    :config
-      (evil-collection-define-key 'normal 'dired-mode-map
-        "h" 'dired-single-up-directory
-        "l" 'dired-single-buffer))
-
-#+end_src
-
-*** Dired Single
-
-#+begin_src emacs-lisp
-
-  (use-package dired-single
-    :commands (dired dired-jump))
-
-#+end_src
-
-*** Dired icons
-
-#+begin_src emacs-lisp
-
-  (use-package all-the-icons-dired
-    :hook (dired-mode . all-the-icons-dired-mode))
-
-#+end_src
-
-*** Dired Open Files in External Programs
-
-#+begin_src emacs-lisp
-
-  (use-package dired-open
-    :commands (dired dired-jump)
-    :config
-    ;; Doesn't work as expected!
-    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-    (setq dired-open-extensions '(("png" . "feh")
-                                  ("mkv" . "mpv"))))
-
-#+end_src
-
-*** Toggle dot files
-
-#+begin_src emacs-lisp
-
-  (use-package dired-hide-dotfiles
-    :hook (dired-mode . dired-hide-dotfiles-mode)
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "H" 'dired-hide-dotfiles-mode))
-
-#+end_src
-
-** Treemacs
-
-#+begin_src emacs-lisp
-
-  (use-package treemacs
-    :commands treemacs
-    :custom
-    (treemacs-width 30))
-
-#+end_src
-
-*** Treemacs Compability with other Packages
-
-#+begin_src emacs-lisp
-
-  (use-package treemacs-evil
-    :after (treemacs evil))
-
-  (use-package treemacs-projectile
-    :after (treemacs projectile))
-
-  ;; causes dired to display icons twice
-  ;; (use-package treemacs-icons-dired
-  ;;   :after dired
-  ;;   :config
-  ;;   (treemacs-icons-dired-mode)
-  ;;   :custom
-  ;;   (treemacs--icon-size 1))
-
-  (use-package treemacs-magit
-    :after (treemacs magit))
-
-#+end_src
-
-* Applications
-** Pass
-
-The standard unix password manager as gnu.org refers to it.
-
-*** Requirements/Installation
-
-*Prerequisites*
-- pass
-
-  On Void Linux:
-
-#+begin_src sh
-
-  sudo xbps-install pass
-
-#+end_src
-
-After installing pass run: (Where ~<gpg-id or email>~ is either gpg-id or your email. Read more on: [[https://wiki.archlinux.org/title/Pass][Arch Wiki Pass]]
-
-#+begin_src sh
-
-  pass init <gpg-id or email>
-
-#+end_src shell
-
-*** Firefox extension
-
-Install Firefox extension on https://github.com/passff/
-
-Continue setting https://github.com/passff/passff-host
-
-On Void Linux you can:
-
-#+begin_src shell
-
-  sudo xbps-install passff-host
-
-#+end_src
-
-*** Setting auth source filename
-
-So pass can find the encrypted password file
-
-#+begin_src emacs-lisp
-
-  (use-package auth-source
-    :defer t
-    :custom 
-    (auth-source-pass-filename "~/.password-store/"))
-
-#+end_src
-
-*** The configuration
-
-#+begin_src emacs-lisp
-
-  (use-package pass)
-
-#+end_src
-
 * Loading Development.el
 
 Loading development.el where packages related to development reside
@@ -1206,6 +959,6 @@ Dial the GC threshold back down so that garbage collection happens more frequent
 #+begin_src emacs-lisp
 
   ;; Make gc pauses faster by decresing the threshold
-  (setq gc-cons-threshold (* 1000 1000))
+  (setq gc-cons-threshold (* 2 1000 1000))
 
 #+end_src

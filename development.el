@@ -9,9 +9,6 @@
     (pretty-activate-groups
       '(:sub-and-superscripts :greek :arithmetic-nary)))
 
-(use-package evil-nerd-commenter
-  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
-
 (defun linas/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
@@ -62,6 +59,8 @@
               :map lsp-mode-map
               ("<tab>" . company-indent-or-complete-common))
   :custom
+  (add-to-list 'company-backends 'company-ispell)
+  (company-ispell-dictionary ispell-dictionary)
   (company-selection-wrap-around t)
   (company-show-numbers t)
   (company-minimum-prefix-length 2)
@@ -100,15 +99,12 @@
   (add-hook 'html-mode-hook 'emmet-mode)
   (add-hook 'css-mode-hook 'emmet-mode))
 
-;; ;; Maybe change to pyri some other day
-;; (use-package python-mode
-;;   :mode "\\.py\\'"
-;;   :hook (python-mode . lsp-deferred))
-
-(add-hook 'python-mode-hook #'lsp-deferred)
-
 (use-package lsp-pyright
   :after (lsp-deferred)
+  :custom
+  (lsp-pyright-typechecking-mode "strict")
+  (lsp-pyright-diagnostic-mode "workspace")
+  (lsp-pyright-use-library-code-for-types t)
   :hook (python-mode . (lambda ()
                          (require 'lsp-pyright)
                          (lsp-deferred))))
@@ -140,11 +136,17 @@
   :mode "\\.go\\'"
   :hook (go-mode . lsp-deferred))
 
+(use-package lsp-java
+  :custom
+  (lsp-java-java-path "/usr/lib/jvm/jre-11/bin/java"))
+
 (with-eval-after-load 'org
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
+     (C .t)
      (shell . t)
+     (latex . t)
      (python . t)))
   (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
@@ -156,3 +158,8 @@
   (global-flycheck-mode))
 
 (use-package multiple-cursors)
+
+(use-package flymake-shellcheck
+  :commands flymake-shellcheck-load
+  :init
+  (add-hook 'sh-mode-hook 'flymake-shellcheck-load))

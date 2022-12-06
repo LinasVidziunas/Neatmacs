@@ -1,0 +1,95 @@
+#+title: Neatmacs Workflows
+
+
+* School Workflow
+** PDFs for assignments & notes
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'ox-latex
+    (add-to-list 'org-latex-classes
+                 '("simple"
+                   "\\documentclass{article}
+    [NO-DEFAULT-PACKAGES]
+    [PACKAGES]
+    [EXTRA]"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+
+  (require 'ox-latex)
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
+  (add-to-list 'org-latex-classes
+               '("school_assignment"
+                 "\\documentclass{article}
+      \\usepackage{listings}
+      \\usepackage{color}
+      \\usepackage{fancyvrb}
+      \\usepackage[margin=0.5in]{geometry}
+
+      \\DeclareFixedFont{\\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+      \\DeclareFixedFont{\\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+      \\definecolor{deepblue}{rgb}{0,0,0.5}
+      \\definecolor{linasyellow}{rgb}{1,1,0.7}
+      \\definecolor{deepred}{rgb}{0.6,0,0}
+      \\definecolor{deepgreen}{rgb}{0,0.5,0}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+  ;; Use listing for source code blocks
+  (setq org-latex-listings t)
+
+  (setq org-latex-listings-options
+        '(("basicstyle" "\\footnotesize\\ttfamily")
+          ("breaklines" "true")
+          ("fancyvrb" "true")
+          ("showstringspaces" "false")
+          ("frame" "tb")
+          ("numbers" "none")
+          ("stepnumber" "1")
+          ("showlines" "true")
+          ("aboveskip" "\\baselineskip")
+          ("backgroundcolor" "\\color{gray!10!white}")
+          ("commentstyle" "\\itshape\\color{purple!40!black}")))
+
+
+  (setq org-latex-listings-options
+        '(("basicstyle" "\\ttfamily")
+          ("breakatwhitespace" "false")
+          ("breakautoindent" "true")
+          ("breaklines" "true")
+          ("columns" "[c]fullflexible")
+          ("commentstyle" "")
+          ("emptylines" "*")
+          ("extendedchars" "false")
+          ("fancyvrb" "true")
+          ("firstnumber" "auto")
+          ("flexiblecolumns" "false")
+          ("frame" "single")
+          ("frameround" "tttt")
+          ("identifierstyle" "")
+          ("keepspaces" "true")
+          ("keywordstyle" "")
+          ("mathescape" "false")
+          ("numbers" "left")
+          ("numbersep" "5pt")
+          ("numberstyle" "\\tiny")
+          ("resetmargins" "false")
+          ("showspaces" "false")
+          ("showtabs" "true")
+          ("stepnumber" "2")
+          ("stringstyle" "")
+          ("tab" "↹")
+          ("tabsize" "4")
+          ("texcl" "false")
+          ("upquote" "false")))
+#+end_src
+
+

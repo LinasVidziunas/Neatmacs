@@ -18,17 +18,6 @@
 
 #+end_src
 
-* Commenting
-
-Very useful! Comment out with alt-/
-
-#+begin_src emacs-lisp
-
-  (use-package evil-nerd-commenter
-    :bind ("M-/" . evilnc-comment-or-uncomment-lines))
-
-#+end_src
-
 * Language Server
 
 #+begin_src emacs-lisp
@@ -95,6 +84,8 @@ Very useful! Comment out with alt-/
                 :map lsp-mode-map
                 ("<tab>" . company-indent-or-complete-common))
     :custom
+    (add-to-list 'company-backends 'company-ispell)
+    (company-ispell-dictionary ispell-dictionary)
     (company-selection-wrap-around t)
     (company-show-numbers t)
     (company-minimum-prefix-length 2)
@@ -170,15 +161,12 @@ Colorizes nested parantheses.
 
 #+begin_src emacs-lisp
 
-  ;; ;; Maybe change to pyri some other day
-  ;; (use-package python-mode
-  ;;   :mode "\\.py\\'"
-  ;;   :hook (python-mode . lsp-deferred))
-
-  (add-hook 'python-mode-hook #'lsp-deferred)
-
   (use-package lsp-pyright
     :after (lsp-deferred)
+    :custom
+    (lsp-pyright-typechecking-mode "strict")
+    (lsp-pyright-diagnostic-mode "workspace")
+    (lsp-pyright-use-library-code-for-types t)
     :hook (python-mode . (lambda ()
                            (require 'lsp-pyright)
                            (lsp-deferred))))
@@ -242,16 +230,25 @@ Colorizes nested parantheses.
 
 #+end_src
 
+** Java
+
+#+begin_src emacs-lisp
+  (use-package lsp-java
+    :custom
+    (lsp-java-java-path "/usr/lib/jvm/jre-11/bin/java"))
+#+end_src
+
 * Org Mode for development
 ** Org Babel Languages
 
 #+begin_src emacs-lisp
-
   (with-eval-after-load 'org
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((emacs-lisp . t)
+       (C .t)
        (shell . t)
+       (latex . t)
        (python . t)))
     (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
@@ -279,5 +276,15 @@ For easier editing.
 #+begin_src emacs-lisp
 
   (use-package multiple-cursors)
+
+#+end_src
+
+* Temp: Shellcheck
+#+begin_src emacs-lisp
+
+  (use-package flymake-shellcheck
+    :commands flymake-shellcheck-load
+    :init
+    (add-hook 'sh-mode-hook 'flymake-shellcheck-load))
 
 #+end_src
