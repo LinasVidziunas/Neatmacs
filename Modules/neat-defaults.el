@@ -42,7 +42,8 @@
 (customize-set-variable 'bidi-paragraph-direction 'left-to-right)
 (if (version<= "27.1" emacs-version)
     (customize-set-variable 'bidi-inhibit-bpa t))
-(global-so-long-mode 1)
+(if (version<= "27.1" emacs-version)
+    (global-so-long-mode 1))
 
 ;; Make shebang (#!) file executable when saved
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
