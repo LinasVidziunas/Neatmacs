@@ -64,7 +64,9 @@
 
 ;; Enabling line numbers
 (column-number-mode)
-(global-display-line-numbers-mode t)
+
+(if (version<= "26.0" emacs-version)
+    (global-display-line-numbers-mode t))
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
