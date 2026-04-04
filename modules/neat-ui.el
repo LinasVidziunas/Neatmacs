@@ -10,15 +10,22 @@
 ;;; Code:
 (require 'use-package)
 
-;;; Sane defaults
-(customize-set-variable 'inhibit-startup-message t)
-(customize-set-variable 'visible-bell t)
+(use-package emacs
+  :ensure nil
 
-(scroll-bar-mode -1)			; Disable visible scrollbar
-(tool-bar-mode -1)			; Disable the toolbar
-(menu-bar-mode -1)			; Disable te menu bar
-(tooltip-mode -1)			; Disable tooltips
-(set-fringe-mode 10)			; Give some breathing room
+  :custom
+  ;;; Sane defaults
+  (inhibit-startup-message t)
+  (visible-bell t)
+
+  :config
+  (scroll-bar-mode -1)			; Disable visible scrollbar
+  (tool-bar-mode -1)			; Disable the toolbar
+  (menu-bar-mode -1)			; Disable te menu bar
+  (tooltip-mode -1)			; Disable tooltips
+  (set-fringe-mode 10)			; Give some breathing room
+  )
+
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ; Make ESC quit prompts
 
@@ -48,11 +55,12 @@
 
 (use-package doom-modeline
   :custom
-  (doom-modeline-height 15)
+  (doom-modeline-height 26)
   :init
   (doom-modeline-mode 1))
 
 (use-package modus-themes
+  :ensure nil
   ;; :straight (:type built-in
   ;;                  :pre (emacs-version <= "28.0")) ; Built-in from 28.0
   :custom
@@ -110,14 +118,6 @@
   :after helpful
   :config
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
-
-;; TODO: Consider removing
-;; Seems like transient is a more used alternative
-;; (use-package hydra)
-
-;; TODO: Consider removing
-;; (use-package biome
-;;   :straight (:host github :repo "SqrtMinusOne/biome"))
 
 
 (provide 'neat-ui)

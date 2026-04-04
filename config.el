@@ -10,7 +10,6 @@
 ;;
 ;;; Code:
 
-
 (defun neatmacs-require (module)
   "Require MODULE, and time the loading."
   (let ((start-time (current-time)))
@@ -25,22 +24,22 @@
 
 ;;; Base
 (neatmacs-require 'neat-defaults)                ; Recommended to enable
-(neatmacs-require 'neat-completion)              ; A full-fledged completion configuration
-(neatmacs-require 'neat-file-management)         ; Improvements to dired and treemacs
-(neatmacs-require 'neat-org)                     ; Default Org configuration
-(neatmacs-require 'neat-org-extras)              ; Aesthetically pleasing Org configuration
-(neatmacs-require 'neat-shells)                  ; Terminal configurations
 (neatmacs-require 'neat-ui)                      ; UI improvements
-(neatmacs-require 'neat-ui-extras)               ; UI extra goodies
-(neatmacs-require 'neat-authentication)          ; Store encrypted passwords
-(neatmacs-require 'neat-tab-bar-workspaces)      ; Tab bar workspaces
-(neatmacs-require 'neat-history)                 ; Additional history settings. Saves minibuffer and last visited file positions.
+(neatmacs-require 'neat-completion)              ; A full-fledged completion configuration
+;; (neatmacs-require 'neat-file-management)         ; Improvements to dired and treemacs
+;; (neatmacs-require 'neat-org)                     ; Default Org configuration
+;; (neatmacs-require 'neat-org-extras)              ; Aesthetically pleasing Org configuration
+;; (neatmacs-require 'neat-shells)                  ; Terminal configurations
+;; (neatmacs-require 'neat-ui-extras)               ; UI extra goodies
+;; (neatmacs-require 'neat-authentication)          ; Store encrypted passwords
+;; (neatmacs-require 'neat-tab-bar-workspaces)      ; Tab bar workspaces
+;; (neatmacs-require 'neat-history)                 ; Additional history settings. Saves minibuffer and last visited file positions.
 
 
 ;;; Writing
-(neatmacs-require 'neat-tex)                     ; Probably unnecessary
-(neatmacs-require 'neat-writing)                 ; Spell checking
-(neatmacs-require 'neat-bibliography)            ; Bibliography
+;; (neatmacs-require 'neat-tex)                     ; Probably unnecessary
+;; (neatmacs-require 'neat-writing)                 ; Spell checking
+;; (neatmacs-require 'neat-bibliography)            ; Bibliography
 
 
 ;;; Keybindings
@@ -49,7 +48,7 @@
 
 ;;; Development
 (neatmacs-require 'neat-development)             ; Neatmacs development base
-(neatmacs-require 'neat-python)                  ;
+;; (neatmacs-require 'neat-python)                  ;
 ;; (neatmacs-require 'neat-lisp)                    ;
 ;; (neatmacs-require 'neat-docker)                  ; Depends on lsp mode
 ;; (neatmacs-require 'neat-java)                    ; Java & Kotlin programming improvements
@@ -61,11 +60,11 @@
 
 
 ;;; Artificial intelligence
-(neatmacs-require 'neat-ai)
+;; (neatmacs-require 'neat-ai)
 
 
 ;;; Desktop mode
-(neatmacs-require 'neat-desktop)
+;; (neatmacs-require 'neat-desktop)
 ;; (require 'neat-desktop-xorg)
 ;; (require 'neat-desktop-wayland)
 
@@ -74,12 +73,12 @@
 ;; (require 'neat-pass)
 
 ;; Fonts
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (custom-set-faces
-             `(default ((t (:font "JetBrains Mono Light 11"))))
-             `(fixed-pitch ((t (:inherit (default)))))
-             `(fixed-pitch-serif ((t (:inherit (default)))))
-             `(variable-pitch ((t (:font "Cantarell 11")))))))
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (custom-set-faces
+;;              `(default ((t (:font "JetBrains Mono Light 11"))))
+;;              `(fixed-pitch ((t (:inherit (default)))))
+;;              `(fixed-pitch-serif ((t (:inherit (default)))))
+;;              `(variable-pitch ((t (:font "Cantarell 11")))))))
 
 ;;; config.el ends here

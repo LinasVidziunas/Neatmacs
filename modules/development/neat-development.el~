@@ -72,7 +72,8 @@
 ;;========================== LANGUAGE SERVER ==========================
 
 (use-package eglot
-  :straight (:type built-in)
+  :ensure nil
+  ;;:straight (:type built-in)
   :hook (prog-mode . eglot-ensure)
   :custom
   ;; (eglot-events-buffer-size 0)
@@ -136,7 +137,7 @@
 
 ;;============================ TREE-SITTER ============================
 
-(use-package combobulate)
+;;(use-package combobulate)
 
 ;; (use-package treesit-auto
 ;;   :if (version<= "29" emacs-version)
@@ -265,6 +266,8 @@
   (add-hook 'ediff-quit-hook #'neatmacs-development--restore-pre-ediff-winconfig))
 
 
+;; Make shebang (#!) file executable when saved
+(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
 (provide 'neat-development)
 ;;; neat-development.el ends here
