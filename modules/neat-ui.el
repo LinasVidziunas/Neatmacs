@@ -117,5 +117,9 @@
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 
+(use-package doom-themes
+  :config
+  (load-theme 'doom-acario-light))
+
 (provide 'neat-ui)
 ;;; neat-ui.el ends here
