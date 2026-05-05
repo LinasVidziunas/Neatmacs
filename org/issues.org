@@ -1,0 +1,7 @@
+#+TITLE: Issues
+
+
+* Overlapping themes
+
+Upon startup 3 overlapping themes are enabled, resulting in inconsistent or even unusable UI experience. E.g. white text
+on white background in org mode buffers.
