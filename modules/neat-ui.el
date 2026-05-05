@@ -20,7 +20,7 @@
 
   :config
   (tooltip-mode -1)			; Disable tooltips
-  (set-fringe-mode 10)			; Give some breathing room
+  (set-fringe-mode 0)			; Disable fringe
   )
 
 
