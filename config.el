@@ -60,7 +60,7 @@
 
 
 ;;; Artificial intelligence
-;; (neatmacs-require 'neat-ai)
+(neatmacs-require 'neat-ai)
 
 
 ;;; Desktop mode
