@@ -60,8 +60,11 @@ FORCE-ECHO is non-nil or if the level meets `neatmacs-logging-echo-level`."
          ;; Strip the colon from the keyword (e.g., :info -> INFO)
          (level-str (upcase (substring (symbol-name level) 1)))
          ;; Format: [MODULE: 16 chars] [DATE] | [LEVEL] | MESSAGE
-         (log-line (format "[%-16.16s] [%s] | [%-5s] | %s"
-                           module time-str level-str message-string))
+         (log-line (format "%s | %-5s | %-12.12s | %s"
+                           time-str
+                           level-str
+                           module
+                           message-string))
          (should-echo (or force-echo
                           (>= (neat-logging--level-weight level)
                               (neat-logging--level-weight neatmacs-logging-echo-level)))))
