@@ -34,15 +34,16 @@
   (evil-collection-init))
 
 (use-package evil-nerd-commenter
+  :after evil
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
-
-;;; Per package evil keybindings
-;;; - dired-single
-(with-eval-after-load 'dired-single
+(use-package dired
+  :after evil evil-collection
+  :ensure nil
+  :config
   (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-single-up-directory
-    "l" 'dired-single-buffer))
+    "h" 'dired-up-directory
+    "l" 'find-file))
 
 ;;; - dired-hide-dotfiles
 (with-eval-after-load 'dired-hide-dotfiles
