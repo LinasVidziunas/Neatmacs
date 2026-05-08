@@ -99,5 +99,7 @@ Usage:
            (msg (apply #'format format-string args)))
        (neat-logging--write ,module-name lvl force-echo msg))))
 
+(neat-logging-define base-log "BASE")
+
 (provide 'neat-logging)
 ;;; neat-logging.el ends here
