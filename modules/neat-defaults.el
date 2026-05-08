@@ -24,7 +24,11 @@
 
   ;; Sentences do not need double spaces to end.
   (sentence-end-double-space nil)
+
+  (inhibit-startup-message t)
   :config
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ; Make ESC quit prompts
+
   (if (version<= "27.1" emacs-version)
     (customize-set-variable 'bidi-inhibit-bpa t)))
 
@@ -121,6 +125,34 @@
     (customize-set-variable 'use-short-answers t)
   (advice-add 'yes-or-no-p :override #'y-or-n-p))
 
+(use-package helpful
+  :bind
+  ("C-h f" . helpful-callable)
+  ("C-h v" . helpful-variable)
+  ("C-h k" . helpful-key)
+
+  ;; Lookup the current symbol at point. C-c C-d is a common keybinding
+  ;; for this in lisp modes.
+  ("C-c C-d" . helpful-at-point)
+
+  ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+  ;; already links to the manual, if a function is referenced there.
+  ("C-h F" . helpful-function)
+
+  ;; By default, C-h C is bound to describe `describe-coding-system'. I
+  ;; don't find this very useful, but it's frequently useful to only
+  ;; look at interactive functions.
+  ("C-h C" . helpful-command)
+  :commands (helpful-callable helpful-function helpful-variable helpful-at-point helpful-command helpful-key)
+  :custom (helpful-max-buffers 10))
+
+
+;;; Elisp-demos
+;; Provides Elisp API demos in help buffers
+(use-package elisp-demos
+  :after helpful
+  :config
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 (provide 'neat-defaults)
 ;;; neat-defaults.el ends here

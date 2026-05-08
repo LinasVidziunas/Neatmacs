@@ -60,18 +60,9 @@ When set to non-nil, will install and load `X` package upon execution."
 
 (use-package emacs
   :ensure nil
-
   :custom
-  ;;; Sane defaults
-  (inhibit-startup-message t)
   (visible-bell t)
-
   :config
-  (tooltip-mode -1)			; Disable tooltips
-  (set-fringe-mode 0)			; Disable fringe
-  )
-
-
   (tooltip-mode -1)
   (set-fringe-mode 0))
 
