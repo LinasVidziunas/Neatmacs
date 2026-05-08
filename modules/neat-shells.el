@@ -19,7 +19,7 @@
 ;; ================================ Term ===============================
 
 (use-package term
-  :straight (:type built-in)
+  :ensure nil
   :commands term
   :custom
   (term-buffer-maximum-size 10000)
@@ -30,7 +30,7 @@
 ;; =============================== Eshell ==============================
 
 (use-package eshell
-  :straight (:type built-in)
+  :ensure nil
   :custom
   (eshell-history-size 10000)
   (eshell-buffer-maximum-lines 10000)

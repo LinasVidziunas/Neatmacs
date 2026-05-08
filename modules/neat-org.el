@@ -13,7 +13,7 @@
 (require 'use-package)
 
 (use-package org
-  :straight (:type built-in)
+  :ensure nil
   :hook (org-mode . visual-line-mode)
   :config
   (require 'org-tempo)

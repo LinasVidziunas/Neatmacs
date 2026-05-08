@@ -7,7 +7,7 @@
 (require 'use-package)
 
 (use-package dired
-  :straight (:type built-in)
+  :ensure nil
   :commands (dired dired-jump)
   :custom
   (dired-listing-switches "-ahl --group-directories-first")
