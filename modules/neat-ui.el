@@ -1,15 +1,26 @@
 ;;; neat-ui.el --- Neatmacs UI Configuration -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; Packages:
-;; - doom-themes
+;;
+;; Module's features. tldr; Enabled with .. in ... Has the following:
+;; - circadian
+;; "Theme-switching for emacs based on daytime"
+;; https://github.com/guidoschmidt/circadian.el
+;;
+;; By default uses daytime (08:00 -> 19:30) light and night time (19:30 -> 08:30) for light and dark themes, respectively.
+;;
+;; Recommended to configure for specific coordinates to better match real world daylight.
+;; See https://github.com/guidoschmidt/circadian.el
+;;
 ;; - doom-modeline
-;; - helpful
-;; - elisp-demos
+;; Replace standard modeline with Doom modeline
+;;
+;; For configuration, see https://github.com/seagle0128/doom-modeline
+;;
+;; - doom-themes
 
 ;;; Code:
 (require 'use-package)
-
 
 (defgroup neatmacs-ui '()
   "User Interface related configuration."
@@ -33,7 +44,6 @@ When set to non-nil, will install and load `X` package upon execution."
   "Dark theme for Neatmacs."
   :group 'neatmacs-ui
   :type 'symbol)
-
 
 ;; Source: https://emacsredux.com/blog/2025/02/03/clean-unloading-of-emacs-themes/
 (defun neatmacs-ui--disable-all-active-themes ()
@@ -62,17 +72,8 @@ When set to non-nil, will install and load `X` package upon execution."
   )
 
 
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit) ; Make ESC quit prompts
-
-
-
-;;; Packages:
-
-(use-package doom-modeline
-  :custom
-  (doom-modeline-height 26)
-  :init
-  (doom-modeline-mode 1))
+  (tooltip-mode -1)
+  (set-fringe-mode 0))
 
 (use-package modus-themes
   :ensure nil
@@ -99,45 +100,31 @@ When set to non-nil, will install and load `X` package upon execution."
      (border-mode-line-inactive unspecified)
 
      ;;;(fringe unspecified)))
-     ))
-
-  :init
-  (load-theme 'modus-vivendi-deuteranopia t))
+     )))
 
 
-(use-package helpful
-  :bind
-  ("C-h f" . helpful-callable)
-  ("C-h v" . helpful-variable)
-  ("C-h k" . helpful-key)
+(require 'neat-modules)
 
-  ;; Lookup the current symbol at point. C-c C-d is a common keybinding
-  ;; for this in lisp modes.
-  ("C-c C-d" . helpful-at-point)
+(when (modulep! '+circadian)
+  (use-package circadian
+    :ensure t
+    :config
+    (setq circadian-themes '(("8:00" . adwaita)
+                             ("19:30" . wombat)))
+    (circadian-setup)))
 
-  ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
-  ;; already links to the manual, if a function is referenced there.
-  ("C-h F" . helpful-function)
-
-  ;; By default, C-h C is bound to describe `describe-coding-system'. I
-  ;; don't find this very useful, but it's frequently useful to only
-  ;; look at interactive functions.
-  ("C-h C" . helpful-command)
-  :commands (helpful-callable helpful-function helpful-variable helpful-at-point helpful-command helpful-key)
-  :custom (helpful-max-buffers 10))
+(when (modulep! '+doom-themes)
+  (use-package doom-themes
+    ;; TODO defcustom or somehow define theme to load
+    :hook (elpaca-after-init . (lambda () (neatmacs-ui--load-theme 'doom-acario-light)))))
 
 
-;;; Elisp-demos
-;; Provides Elisp API demos in help buffers
-(use-package elisp-demos
-  :after helpful
-  :config
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
-
-
-(use-package doom-themes
-  ;; TODO defcustom or somehow define theme to load
-  :hook (elpaca-after-init . (lambda () (neatmacs-ui--load-theme 'doom-acario-light))))
+(when (modulep! '+doom-modeline)
+  (use-package doom-modeline
+    :custom
+    (doom-modeline-height 26)
+    :init
+    (doom-modeline-mode 1)))
 
 (provide 'neat-ui)
 ;;; neat-ui.el ends here
