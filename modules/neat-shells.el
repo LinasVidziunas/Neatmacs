@@ -141,6 +141,13 @@
 ;;   (shell-pop-restore-window-configuration t)
 ;;   (shell-pop-cleanup-buffer-at-process-exit t))
 
+;; TODO
+;; Dependency: zig (the programming langauge)
+;;(use-package gterm
+;;  :ensure (:host github :repo "rwc9u/emacs-libgterm")
+;;  :sys-deps zig
+;;  :custom
+;;  (gterm-always-compile-module t))
 
 (provide 'neat-shells)
 ;;; neat-shells.el ends here
