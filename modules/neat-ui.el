@@ -10,6 +10,19 @@
 ;;; Code:
 (require 'use-package)
 
+;; Source: https://emacsredux.com/blog/2025/02/03/clean-unloading-of-emacs-themes/
+(defun neatmacs-ui--disable-all-active-themes ()
+  "Disable all currently active themes."
+  (interactive)
+  (dolist (theme custom-enabled-themes)
+    (disable-theme theme)))
+
+;; Source: https://emacsredux.com/blog/2025/02/03/clean-unloading-of-emacs-themes/
+(defun neatmacs-ui--load-theme (theme)
+  "Disable all currently active themes and load THEME."
+  (neatmacs-ui--disable-all-active-themes)
+  (load-theme theme t))
+
 (use-package emacs
   :ensure nil
 
