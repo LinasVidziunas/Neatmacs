@@ -30,7 +30,9 @@
               '+doom-modeline
               ;;'+doom-themes
               )
-(neatmacs-require 'neat-completion)              ; A full-fledged completion configuration
+(neat-require 'neat-completion ;; A full-fledged completion configuration
+              '+vertico-buffer-frame
+              )
 ;; (neatmacs-require 'neat-file-management)         ; Improvements to dired and treemacs
 ;; (neatmacs-require 'neat-org)                     ; Default Org configuration
 ;; (neatmacs-require 'neat-org-extras)              ; Aesthetically pleasing Org configuration

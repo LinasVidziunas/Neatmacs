@@ -1,6 +1,11 @@
 ;;; neat-completion.el --- Neatmacs Completion Configuration -*- lexical-binding: t; -*-
 
 ;;; Commentary:
+;;
+;; Module's features. tldr; Enabled with .. in ... Has the following:
+;; - vertico-buffer-frame
+;; "child frame display for Vertico’s vertico-buffer-mode, with an optional preview child frame"
+;; https://github.com/kn66/vertico-buffer-frame
 
 
 ;;; Code:
@@ -301,22 +306,24 @@
   (setf (alist-get 'elpaca-info marginalia-command-categories) 'elpaca)
   (marginalia-mode))
 
-;; TODO should be a module feature that can be toggled.
-(use-package vertico-buffer-frame
-  :after vertico
-  :ensure (:host github :repo "kn66/vertico-buffer-frame")
-  :bind
-  (:map vertico-map
-        ("C-t" . vertico-buffer-frame-toggle-preview))
-  :hook (elpaca-after-init . (lambda ()
-                               (vertico-buffer-mode 1)
-                               (vertico-buffer-frame-mode 1)))
-  :custom
-  (vertico-buffer-frame-preview t)
-  (vertico-buffer-frame-preview-layout 'overlay)
-  (vertico-buffer-frame-preview-delay 0.2)
-  (vertico-buffer-frame-preview-io-timeout 0.3)
-  (vertico-buffer-frame-golden-ratio-scale 1.00))
+(require 'neat-modules)
+
+(when (modulep! '+vertico-buffer-frame)
+  (use-package vertico-buffer-frame
+    :after vertico
+    :ensure (:host github :repo "kn66/vertico-buffer-frame")
+    :bind
+    (:map vertico-map
+          ("C-t" . vertico-buffer-frame-toggle-preview))
+    :hook (elpaca-after-init . (lambda ()
+                                 (vertico-buffer-mode 1)
+                                 (vertico-buffer-frame-mode 1)))
+    :custom
+    (vertico-buffer-frame-preview t)
+    (vertico-buffer-frame-preview-layout 'overlay)
+    (vertico-buffer-frame-preview-delay 0.2)
+    (vertico-buffer-frame-preview-io-timeout 0.3)
+    (vertico-buffer-frame-golden-ratio-scale 1.00)))
 
 
 (provide 'neat-completion)
