@@ -10,6 +10,31 @@
 ;;; Code:
 (require 'use-package)
 
+
+(defgroup neatmacs-ui '()
+  "User Interface related configuration."
+  :tag "Neat UI"
+  :group 'neatmacs
+  :prefix "neatmacs-ui-")
+
+(defcustom neatmacs-ui-circadian nil
+  "When non-nil, will use light and dark themes depending on the current time of day.
+
+When set to non-nil, will install and load `X` package upon execution."
+  :group 'neatmacs-ui
+  :type 'boolean)
+
+(defcustom neatmacs-ui-circadian-light-theme 'modus-operandi-deuteranopia
+  "Light theme to use when `neatmacs-ui-circadian` is non-nil and ."
+  :group 'neatmacs-ui
+  :type 'symbol)
+
+(defcustom neatmacs-ui-circadian-dark-theme 'modus-vivendi-deuteranopia
+  "Dark theme for Neatmacs."
+  :group 'neatmacs-ui
+  :type 'symbol)
+
+
 ;; Source: https://emacsredux.com/blog/2025/02/03/clean-unloading-of-emacs-themes/
 (defun neatmacs-ui--disable-all-active-themes ()
   "Disable all currently active themes."
@@ -39,26 +64,6 @@
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ; Make ESC quit prompts
 
-;;; Font
-(defgroup neatmacs-ui '()
-  "User interface related configuration for Neatmacs."
-  :tag "Neat UI"
-  :group 'neatmacs)
-
-(defcustom neatmacs-ui-circadian nil
-  "When non-nil, will use light and dark themes depending on the sun."
-  :group 'neatmacs-ui
-  :type 'boolean)
-
-(defcustom neatmacs-ui-light-theme 'modus-operandi-deuteranopia
-  "Light theme for Neatmacs."
-  :group 'neatmacs-ui
-  :type 'symbol)
-
-(defcustom neatmacs-ui-dark-theme 'modus-vivendi-deuteranopia
-  "Dark theme for Neatmacs."
-  :group 'neatmacs-ui
-  :type 'symbol)
 
 
 ;;; Packages:
