@@ -1,4 +1,4 @@
-;;; neat-sys-deps.el --- Base ... module for Neatmacs -*- lexical-binding: t; -*-
+;;; neat-sys-deps.el --- Core ... module for Neatmacs -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2026 Linas Vidziunas
 ;;
@@ -8,7 +8,7 @@
 ;; Modified: May 08, 2026
 ;; Version: 0.0.1
 ;; Keywords: internal, lisp
-;; Homepage: https://github.com/linasvidz/Neatmacs/base/neat-sys-deps
+;; Homepage: https://github.com/linasvidz/Neatmacs/
 ;; Package-Requires: ((emacs "24.3") (cl-lib "0.5"))
 ;;
 ;; This file is not part of GNU Emacs.

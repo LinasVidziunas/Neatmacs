@@ -15,7 +15,7 @@
 ;;
 ;;; Commentary:
 ;;
-;;  Base logging facility for Neatmacs modules.
+;;  Core logging facility for Neatmacs modules.
 ;;  Provides a factory function to generate module-specific loggers.
 ;;
 ;;; Code:
@@ -71,7 +71,7 @@ FORCE-ECHO is non-nil or if the level meets `neatmacs-logging-echo-level`."
 
     ;; 1. Echo to *Messages* if threshold is met
     (when should-echo
-      (message "[%s] %s: %s" module level-str message-string))
+      (message "[NEATMACS %s] %s: %s" module level-str message-string))
 
     ;; 2. Write to the dedicated log buffer safely
     (with-current-buffer (get-buffer-create neatmacs-logging-buffer-name)
@@ -86,7 +86,6 @@ FORCE-ECHO is non-nil or if the level meets `neatmacs-logging-echo-level`."
 ;;;###autoload
 (defmacro neat-logging-define (func-name module-name)
   "Define a logging function FUNC-NAME for MODULE-NAME.
-This generates a callable function so you don't have to use `funcall`.
 
 Usage:
   (neat-logging-define my-log \"ui-module\")
@@ -99,7 +98,7 @@ Usage:
            (msg (apply #'format format-string args)))
        (neat-logging--write ,module-name lvl force-echo msg))))
 
-(neat-logging-define base-log "BASE")
+(neat-logging-define core-log "CORE")
 
 (provide 'neat-logging)
 ;;; neat-logging.el ends here

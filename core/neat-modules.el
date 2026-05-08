@@ -43,11 +43,11 @@ Example: (neat-require 'neat-ui '+icons '+extra)"
     (if (file-exists-p path)
         (progn
           (load path nil 'nomessage)
-          (base-log :info
+          (core-log :info
                     (format "Loaded %s %s in %.3fs"
                             (propertize (symbol-name module) 'face 'font-lock-keyword-face)
                             (if flags (propertize (format "%s" flags) 'face 'font-lock-comment-face) "")
                             (float-time (time-since start-time)))))
-      (base-log :warn "Neatmacs: Could not find module file %s" path))))
+      (core-log :warn "Neatmacs: Could not find module file %s" path))))
 
 (provide 'neat-modules)
