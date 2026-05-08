@@ -325,6 +325,14 @@
     (vertico-buffer-frame-preview-io-timeout 0.3)
     (vertico-buffer-frame-golden-ratio-scale 1.00)))
 
+(when (modulep! '+icons)
+  (use-package all-the-icons)
+
+  (use-package all-the-icons-completion
+    :after (marginalia all-the-icons)
+    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+    :init
+    (all-the-icons-completion-mode)))
 
 (provide 'neat-completion)
 ;;; neat-completion.el ends here

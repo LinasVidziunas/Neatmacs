@@ -30,8 +30,10 @@
               '+doom-modeline
               ;;'+doom-themes
               )
+
 (neat-require 'neat-completion ;; A full-fledged completion configuration
-              '+vertico-buffer-frame
+              '+vertico-buffer-frame ;; Unstable. Breaking UI.
+              '+icons ;; still need to insall
               )
 ;; (neatmacs-require 'neat-file-management)         ; Improvements to dired and treemacs
 ;; (neatmacs-require 'neat-org)                     ; Default Org configuration
