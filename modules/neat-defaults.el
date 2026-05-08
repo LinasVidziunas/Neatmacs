@@ -76,6 +76,7 @@
 
 
 (use-package no-littering
+  :ensure (:wait t)
   :config
   ;;; Auto-save, backup, and undo-tree files
   ;; Increases odds that sensitive informaiton is written to disk.
