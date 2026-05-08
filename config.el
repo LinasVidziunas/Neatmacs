@@ -10,21 +10,26 @@
 ;;
 ;;; Code:
 
+
+(require 'neat-modules)
+
 (defun neatmacs-require (module)
   "Require MODULE, and time the loading."
   (let ((start-time (current-time)))
-    (require module)
-    (message "Loaded %s in %.3fs" module (float-time (time-since start-time)))))
+    (require module)))
 
-
-(cond ((eq system-type 'darwin)
-       (neatmacs-require 'neat-macos)))
+;; (cond ((eq system-type 'darwin)
+;;        (neatmacs-require 'neat-macos)))
 
 ;;; ============================== Modules ==============================
 
 ;;; Base
 (neatmacs-require 'neat-defaults)                ; Recommended to enable
-(neatmacs-require 'neat-ui)                      ; UI improvements
+(neat-require 'neat-ui ;; UI improvements
+              '+circadian
+              '+doom-modeline
+              ;;'+doom-themes
+              )
 (neatmacs-require 'neat-completion)              ; A full-fledged completion configuration
 ;; (neatmacs-require 'neat-file-management)         ; Improvements to dired and treemacs
 ;; (neatmacs-require 'neat-org)                     ; Default Org configuration

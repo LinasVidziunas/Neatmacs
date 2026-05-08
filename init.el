@@ -77,9 +77,8 @@
 
 (setq package-enable-at-startup nil)
 
-;;; Add Modules to load path
+(add-to-list 'load-path (expand-file-name "core/" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "modules/" user-emacs-directory))
-(add-to-list 'load-path (expand-file-name "modules/applications" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "modules/development" user-emacs-directory))
 
 ;;; Load user configuration
@@ -96,7 +95,6 @@
 
 ;;; Decrease garbage collection threshold
 (setq gc-cons-threshold (* 80 1000 1000))
-
 
 ;; Local Variables:
 ;; no-byte-compile: t
