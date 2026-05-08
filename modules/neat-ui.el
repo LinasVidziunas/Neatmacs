@@ -131,8 +131,8 @@
 
 
 (use-package doom-themes
-  :config
-  (load-theme 'doom-acario-light))
+  ;; TODO defcustom or somehow define theme to load
+  :hook (elpaca-after-init . (lambda () (neatmacs-ui--load-theme 'doom-acario-light))))
 
 (provide 'neat-ui)
 ;;; neat-ui.el ends here
