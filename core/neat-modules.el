@@ -24,23 +24,18 @@
 (defvar neat-enabled-flags nil
   "Temporary storage for flags passed to the current module.")
 
-(defvar neat-modules-dir (expand-file-name "modules/" user-emacs-directory)
-  "The directory where module files are stored.")
-
 (defun modulep! (flag)
   "Check if FLAG is enabled for the current module context."
   (memq flag neat-enabled-flags))
 
 (defun neat-require (module &rest flags)
-  "Load a module from `neat-modules-dir` with optional FLAGS.
-Example: (neat-require 'neat-ui '+icons '+extra)"
+  "Search `load-path` for MODULE and load it with optional FLAGS."
   (let* ((start-time (current-time))
-         (filename (format "%s.el" module))
-         (path (expand-file-name filename neat-modules-dir))
-         ;; Local binding so flags don't leak between different module loads
+         ;; locate-library returns the full path (e.g., .../modules/development/neat-python.el)
+         (path (locate-library (symbol-name module)))
          (neat-enabled-flags flags))
 
-    (if (file-exists-p path)
+    (if path
         (progn
           (load path nil 'nomessage)
           (core-log :info
@@ -48,6 +43,6 @@ Example: (neat-require 'neat-ui '+icons '+extra)"
                             (propertize (symbol-name module) 'face 'font-lock-keyword-face)
                             (if flags (propertize (format "%s" flags) 'face 'font-lock-comment-face) "")
                             (float-time (time-since start-time)))))
-      (core-log :warn "Neatmacs: Could not find module file %s" path))))
+      (core-log :warn (format "Neatmacs: Could not find module '%s' in load-path" module)))))
 
 (provide 'neat-modules)
